@@ -8,20 +8,14 @@
 
 #include <fstream>
 #include <vector>
-#include <iostream>
 
-
-GLSLProgram::~GLSLProgram()
-{
-
-}
 
 // Compile vertex and fragment shaders
 void GLSLProgram::compileShaders(const std::string &vertexShaderFilePath, const std::string &fragmentShaderFilePath)
 {
-	createShaders();
-
 	programID_ = glCreateProgram();
+
+	createShaders();
 
 	compileShader(vertexShaderFilePath, vertexShaderID_);
 	compileShader(fragmentShaderFilePath, fragmentShaderID_);
@@ -48,7 +42,7 @@ void GLSLProgram::createShaders()
 // Compile shader from given path
 void GLSLProgram::compileShader(const std::string &shaderFilePath, GLuint shaderID)
 {
-	std::string shaderContent = getShaderContent(shaderFilePath); // contains shader contents
+	const std::string shaderContent = getShaderContent(shaderFilePath); // contains shader contents
 
 	// Load shader
 	const char* ptrShaderContent = shaderContent.c_str();
@@ -75,8 +69,6 @@ void GLSLProgram::compileShader(const std::string &shaderFilePath, GLuint shader
 
 		const std::string errorString = errorLog.data();
 		fatalError(errorString + "Shader: " + shaderFilePath + " failed to compile!");
-
-		return;
 	}
 }
 
@@ -143,9 +135,7 @@ void GLSLProgram::linkShaders()
 		glDeleteShader(fragmentShaderID_);
 
 		const std::string errorString = errorLog.data();
-		fatalError(errorString + "Shaders: failed to link!");
-
-		return;
+		fatalError(errorString + "Shaders failed to link!");
 	}
 
 	// Detaching shaders
@@ -158,7 +148,7 @@ void GLSLProgram::linkShaders()
 }
 
 // Use current program
-void GLSLProgram::use()
+void GLSLProgram::use() const
 {
 	glUseProgram(programID_);
 
@@ -169,7 +159,7 @@ void GLSLProgram::use()
 }
 
 // Unuse current program
-void GLSLProgram::unuse()
+void GLSLProgram::unuse() const
 {
 	glUseProgram(0);
 

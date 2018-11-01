@@ -10,6 +10,11 @@
 #include <iostream>
 
 
+Game::~Game()
+{
+	SDL_Quit();
+}
+
 // Run the game
 void Game::run()
 {
@@ -35,8 +40,8 @@ void Game::initGame()
 	// Enable double buffer
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	// White cleaning
-	glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+	// Set clear color
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 // Create window
@@ -81,6 +86,7 @@ void Game::initShaders()
 	colorProgram_.compileShaders("shaders/color_shading.vert", "shaders/color_shading.frag");
 
 	colorProgram_.addAttribute("vertexPosition");
+	colorProgram_.addAttribute("vertexColor");
 
 	colorProgram_.linkShaders();
 }
@@ -124,7 +130,7 @@ void Game::drawGame()
 
 	colorProgram_.use();
 
-	Sprite(-1.0f, -1.0f, 1.0f, 1.0f).draw();
+	Sprite(-1.0f, -1.0f, 2.0f, 2.0f).draw();
 
 	colorProgram_.unuse();
 

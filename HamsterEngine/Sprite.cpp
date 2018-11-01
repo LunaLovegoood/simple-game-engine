@@ -4,7 +4,12 @@
 // See the LICENSE file in the project root for more information.
 
 #include "Sprite.h"
+#include "Vertex.h"
 
+#include <cstddef>
+
+
+const int NUM_QUAD_VERTICES = 6;
 
 Sprite::Sprite(float x, float y, float width, float height)
 	: x_(x), y_(y), 
@@ -43,32 +48,32 @@ void Sprite::init(float x, float y, float width, float height)
 void Sprite::loadBuffer()
 {
 	// Vertex coordinates
-	float vertexData[12];
+	Vertex vertexData[NUM_QUAD_VERTICES];
 
 	// First triangle
-	vertexData[0] = x_;
-	vertexData[1] = y_;
+	vertexData[0].position = { x_, y_ };
 
-	vertexData[2] = x_;
-	vertexData[3] = y_ + height_;
+	vertexData[1].position = { x_, y_ + height_ };
 
-	vertexData[4] = x_ + width_;
-	vertexData[5] = y_ + height_;
+	vertexData[2].position = { x_ + width_, y_ + height_ };
 
 	// Second triangle
-	vertexData[6] = x_;
-	vertexData[7] = y_;
+	vertexData[3].position = { x_, y_ };
 
-	vertexData[8] = x_ + width_;
-	vertexData[9] = y_;
+	vertexData[4].position = { x_ + width_, y_ };
 
-	vertexData[10] = vertexData[4];
-	vertexData[11] = vertexData[5];
+	vertexData[5].position = { vertexData[2].position.x, vertexData[2].position.y };
+
+	// Initialize color of vertices
+	vertexData[1].color = { 0, 0, 255, 255 };
+	vertexData[2].color = vertexData[5].color = { 255, 0, 0, 255 };
+	vertexData[4].color = { 0, 255, 0, 255 };
+	vertexData[0].color = vertexData[3].color = { 255, 255, 255, 255 };
 
 	// Bind VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vboID_);
 
-	// Load data into buffer
+	// Upload data into buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
 
 	// Unbind VBO
@@ -89,8 +94,10 @@ void Sprite::draw() const
 	// Enable first array
 	glEnableVertexAttribArray(0);
 
-	// Specify the location and data format of the vertex array
-	glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+	// Setting position attribute pointer
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
+	// Setting color attribute pointer
+	glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void *)offsetof(Vertex, color));
 
 	// Draw from buffer
 	glDrawArrays(GL_TRIANGLES, 0, 6);

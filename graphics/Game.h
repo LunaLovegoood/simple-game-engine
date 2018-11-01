@@ -16,9 +16,13 @@
 enum class GameState{ PLAY, EXIT };
 
 
+// Holds main game logic and setup
 class Game
 {
 public:
+	Game() = default;
+	~Game();
+
 	void run();
 
 private:

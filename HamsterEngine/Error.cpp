@@ -7,10 +7,9 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <string>
+#include <SDL/SDL.h>
 
-
-
+// Prints out error message and exits the program
 void fatalError(const std::string &errorMessage)
 {
 	std::cerr << errorMessage;
@@ -18,5 +17,6 @@ void fatalError(const std::string &errorMessage)
 	std::cout << "\n\nPress Enter to quit..." << std::endl;
 	std::cin.get();
 
+	SDL_Quit();
 	exit(1);
 }

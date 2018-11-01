@@ -9,11 +9,13 @@
 #include <GL/glew.h>
 #include <string>
 
+
+// Provides operations with shaders
 class GLSLProgram
 {
 public:
 	GLSLProgram() = default;
-	~GLSLProgram();
+	~GLSLProgram() = default;
 
 	void compileShaders(const std::string &vertexShaderFilePath, const std::string &fragmentShaderFilePath);
 
@@ -21,8 +23,8 @@ public:
 
 	void addAttribute(const std::string &attributeName);
 
-	void use();
-	void unuse();
+	void use() const;
+	void unuse() const;
 
 private:
 	GLuint programID_{ 0 };

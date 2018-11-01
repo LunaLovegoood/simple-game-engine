@@ -22,6 +22,7 @@
     <ClInclude Include="Error.h" />
     <ClInclude Include="GLSLProgram.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Error.cpp" />

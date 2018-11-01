@@ -9,7 +9,6 @@
 #include <fstream>
 #include <vector>
 
-
 GLSLProgram::~GLSLProgram()
 {
 
@@ -89,14 +88,18 @@ const std::string GLSLProgram::getShaderContent(const std::string &shaderFilePat
 		fatalError("Failed to open " + shaderFilePath);
 	}
 
-	std::string shaderContents{}; // contains shader program content
-	std::string line{};
+	// Get file size
+	shaderFile.seekg(0, std::ios::end);
+
+	size_t fileSize = shaderFile.tellg();
+
+	shaderFile.seekg(0, std::ios::beg);
+
+	// Create string to hold file contents and reserve space for file size
+	std::string shaderContents(fileSize, ' ');
 
 	// Get shader program content
-	while (std::getline(shaderFile, line))
-	{
-		shaderContents += line + '\n';
-	}
+	shaderFile.read(&shaderContents[0], fileSize);
 
 	shaderFile.close();
 

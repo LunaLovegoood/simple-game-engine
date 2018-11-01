@@ -1,4 +1,4 @@
-﻿# Game using opengl
+﻿# Simple game engine using opengl
 
 Writing a simple game engine and a simple game using it
 

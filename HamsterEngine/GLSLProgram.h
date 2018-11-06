@@ -6,6 +6,8 @@
 #ifndef GLSLPROGRAM_H_
 #define GLSLPROGRAM_H_
 
+#include "Shader.h"
+
 #include <GL/glew.h>
 #include <string>
 
@@ -29,14 +31,10 @@ public:
 private:
 	GLuint programID_{ 0 };
 
-	GLuint vertexShaderID_{ 0 };
-	GLuint fragmentShaderID_{ 0 };
+    Shader vertexShader_{};
+    Shader fragmentShader_{};
 
 	int numAttributes_{};
-
-	void createShaders();
-	void compileShader(const std::string &shaderFilePath, GLuint shaderID);
-	const std::string getShaderContent(const std::string &shaderFilePath);
 };
 
 

@@ -13,91 +13,13 @@
 // Compile vertex and fragment shaders
 void GLSLProgram::compileShaders(const std::string &vertexShaderFilePath, const std::string &fragmentShaderFilePath)
 {
-	programID_ = glCreateProgram();
+    programID_ = glCreateProgram();
 
-	createShaders();
+    vertexShader_.createShader(ShaderType::VERTEX_SHADER);
+    fragmentShader_.createShader(ShaderType::FRAGMENT_SHADER);
 
-	compileShader(vertexShaderFilePath, vertexShaderID_);
-	compileShader(fragmentShaderFilePath, fragmentShaderID_);
-}
-
-// Create vertex and fragment shaders
-void GLSLProgram::createShaders()
-{
-	// Create vertex shader
-	vertexShaderID_ = glCreateShader(GL_VERTEX_SHADER);
-	if (!vertexShaderID_)
-	{
-		fatalError("Vertex shader failed to be created!");
-	}
-
-	// Create fragment shader
-	fragmentShaderID_ = glCreateShader(GL_FRAGMENT_SHADER);
-	if (!vertexShaderID_)
-	{
-		fatalError("Fragment shader failed to be created!");
-	}
-}
-
-// Compile shader from given path
-void GLSLProgram::compileShader(const std::string &shaderFilePath, GLuint shaderID)
-{
-	const std::string shaderContent = getShaderContent(shaderFilePath); // contains shader contents
-
-	// Load shader
-	const char* ptrShaderContent = shaderContent.c_str();
-	glShaderSource(shaderID, 1, &ptrShaderContent, nullptr);
-
-	// Compile shader
-	glCompileShader(shaderID);
-
-	// Check if the compilation was successful
-	GLint isCompiled = 0;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
-
-	if (isCompiled == GL_FALSE)
-	{
-		GLint maxLength = 0;
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
-
-		// Get error log
-		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(shaderID, maxLength, &maxLength, &errorLog[0]);
-
-		// Free resources
-		glDeleteShader(shaderID);
-
-		const std::string errorString = errorLog.data();
-		fatalError(errorString + "Shader: " + shaderFilePath + " failed to compile!");
-	}
-}
-
-// Returns shader program contents
-const std::string GLSLProgram::getShaderContent(const std::string &shaderFilePath)
-{
-	// Open shader file
-	std::ifstream shaderFile(shaderFilePath);
-	if (shaderFile.fail())
-	{
-		fatalError("Failed to open " + shaderFilePath);
-	}
-
-	// Get file size
-	shaderFile.seekg(0, std::ios::end);
-
-	size_t fileSize = shaderFile.tellg();
-
-	shaderFile.seekg(0, std::ios::beg);
-
-	// Create string to hold file contents and reserve space for file size
-	std::string shaderContents(fileSize, ' ');
-
-	// Get shader program content
-	shaderFile.read(&shaderContents[0], fileSize);
-
-	shaderFile.close();
-
-	return shaderContents;
+    vertexShader_.compile(vertexShaderFilePath);
+    fragmentShader_.compile(fragmentShaderFilePath);
 }
 
 // Bind attributes location
@@ -110,8 +32,8 @@ void GLSLProgram::addAttribute(const std::string &attributeName)
 void GLSLProgram::linkShaders()
 {
 	// Attach shaders to program
-	glAttachShader(programID_, vertexShaderID_);
-	glAttachShader(programID_, fragmentShaderID_);
+	glAttachShader(programID_, vertexShader_.ID());
+	glAttachShader(programID_, fragmentShader_.ID());
 
 	// Link program
 	glLinkProgram(programID_);
@@ -131,20 +53,20 @@ void GLSLProgram::linkShaders()
 
 		// Clean up shaders and program
 		glDeleteProgram(programID_);
-		glDeleteShader(vertexShaderID_);
-		glDeleteShader(fragmentShaderID_);
+		glDeleteShader(vertexShader_.ID());
+		glDeleteShader(fragmentShader_.ID());
 
 		const std::string errorString = errorLog.data();
 		fatalError(errorString + "Shaders failed to link!");
 	}
 
 	// Detaching shaders
-	glDetachShader(programID_, vertexShaderID_);
-	glDetachShader(programID_, fragmentShaderID_);
+	glDetachShader(programID_, vertexShader_.ID());
+	glDetachShader(programID_, fragmentShader_.ID());
 
 	// Deleting shaders
-	glDeleteShader(vertexShaderID_);
-	glDeleteShader(fragmentShaderID_);
+	glDeleteShader(vertexShader_.ID());
+	glDeleteShader(fragmentShader_.ID());
 }
 
 // Use current program
